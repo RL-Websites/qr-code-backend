@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// OpenAPI (optional)
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -25,8 +25,8 @@ var app = builder.Build();
 // Enable CORS
 app.UseCors("AllowAll");
 
-// Serve static files from wwwroot
-app.UseStaticFiles(); // default wwwroot
+// Serve static files from wwwroot (default)
+app.UseStaticFiles();
 
 // Serve specifically /wwwroot/qrcodes under /qrcodes
 app.UseStaticFiles(new StaticFileOptions
@@ -36,14 +36,12 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/qrcodes"
 });
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
