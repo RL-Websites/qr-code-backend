@@ -1,7 +1,9 @@
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 // Enable CORS
@@ -19,7 +21,20 @@ builder.Services.AddCors(options =>
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+// Enable CORS
 app.UseCors("AllowAll");
+
+// Serve static files from wwwroot
+app.UseStaticFiles(); // default wwwroot
+
+// Serve specifically /wwwroot/qrcodes under /qrcodes
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes")),
+    RequestPath = "/qrcodes"
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
