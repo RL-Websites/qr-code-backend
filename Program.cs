@@ -18,8 +18,8 @@ builder.Services.AddCors(options =>
     });
 
     // Optional: a permissive DEV policy you can toggle via env
-    options.AddPolicy("AllowAllDev", policy =>
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+    //options.AddPolicy("AllowAllDev", policy =>
+    //    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 var app = builder.Build();
