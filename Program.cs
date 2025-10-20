@@ -23,40 +23,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ==========================
-// Middleware pipeline
-// ==========================
+app.UseHttpsRedirection();
 
-// Enable CORS
+app.UseRouting();
 app.UseCors("AllowAll");
 
-// Serve static files from wwwroot
-app.UseStaticFiles();
-
-// Serve /wwwroot/qrcodes under /qrcodes path
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes")),
-    RequestPath = "/qrcodes"
-});
-
-// Development exception page
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-
-// Routing & controllers
-app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
-app.Run();
-
-// Routing & controllers
-app.UseRouting();
-app.UseAuthorization();
-app.MapControllers();
+app.UseStaticFiles(); // (optional) static files can be before/after, not critical for CORS
+app.UseStaticFiles(new StaticFileOptions { /* qrcodes mapping */ });
 
 app.Run();
