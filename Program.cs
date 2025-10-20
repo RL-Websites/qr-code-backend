@@ -43,3 +43,20 @@ app.UseStaticFiles(new StaticFileOptions
 
 // Development exception page
 if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+// Routing & controllers
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
+
+// Routing & controllers
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();
