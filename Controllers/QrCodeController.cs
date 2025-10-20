@@ -9,17 +9,14 @@ namespace QRCode.Controllers
     {        
         [HttpPost("GenerateQRCode")]
         public async Task<IActionResult> GenerateQRCode([FromBody] QrCodeGeneratorDto dto)
-        {
-            // File path server side generate করি
+        {           
             var fileName = $"qr_{DateTime.UtcNow.Ticks}.svg";
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes", fileName);
 
-            // Folder ensure করো
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
             await SaveQrCodeToFile(dto, filePath);
 
-            // Client কে ফাইলের public URL return করবো
             var fileUrl = $"{Request.Scheme}://{Request.Host}/qrcodes/{fileName}";
 
             return Ok(new { url = fileUrl });

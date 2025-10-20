@@ -1,37 +1,37 @@
-﻿using Microsoft.Extensions.FileProviders;
-using System.IO;
+﻿var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+// Add services to the container.
 
-// ==========================
-// Add services
-// ==========================
 builder.Services.AddControllers();
 
-// --------------------------
-// Configure CORS
-// --------------------------
+// Enable CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+
 var app = builder.Build();
+app.UseCors("AllowAll");
+app.UseStaticFiles();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
-app.UseCors("AllowAll");
-
 app.UseAuthorization();
-app.MapControllers();
 
-app.UseStaticFiles(); // (optional) static files can be before/after, not critical for CORS
-app.UseStaticFiles(new StaticFileOptions { /* qrcodes mapping */ });
+app.MapControllers();
 
 app.Run();
