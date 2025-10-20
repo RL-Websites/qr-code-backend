@@ -1,4 +1,4 @@
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -19,6 +19,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+app.UseHttpsRedirection();
+
+// ✅ Must be before app.UseAuthorization()
+app.UseStaticFiles();
+
 app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
