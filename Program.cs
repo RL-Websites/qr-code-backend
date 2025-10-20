@@ -28,7 +28,7 @@ var app = builder.Build();
 // ==========================
 
 // Enable CORS
-app.UseCors("AllowFrontend");
+app.UseCors("AllowAll");
 
 // Serve static files from wwwroot
 app.UseStaticFiles();
