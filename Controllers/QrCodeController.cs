@@ -9,17 +9,25 @@ namespace QRCode.Controllers
     {        
         [HttpPost("GenerateQRCode")]
         public async Task<IActionResult> GenerateQRCode([FromBody] QrCodeGeneratorDto dto)
-        {           
-            var fileName = $"qr_{DateTime.UtcNow.Ticks}.svg";
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes", fileName);
+        {
+            try
+            {
+                var fileName = $"qr_{DateTime.UtcNow.Ticks}.svg";
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes", fileName);
 
-            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
 
-            await SaveQrCodeToFile(dto, filePath);
+                await SaveQrCodeToFile(dto, filePath);
 
-            var fileUrl = $"{Request.Scheme}://{Request.Host}/qrcodes/{fileName}";
+                var fileUrl = $"{Request.Scheme}://{Request.Host}/qrcodes/{fileName}";
 
-            return Ok(new { url = fileUrl });
+                return Ok(new { url = fileUrl });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { error = ex.Message });
+            }
+            
         }
 
         private async Task SaveQrCodeToFile(QrCodeGeneratorDto dto, string filePath)
