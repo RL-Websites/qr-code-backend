@@ -4,7 +4,7 @@ using System.IO;
 var builder = WebApplication.CreateBuilder(args);
 
 // ==========================
-// Add services to the container
+// Add services
 // ==========================
 builder.Services.AddControllers();
 
@@ -21,11 +21,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// --------------------------
-// Add OpenAPI / Swagger if needed
-// --------------------------
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
 // ==========================
@@ -36,9 +31,9 @@ var app = builder.Build();
 app.UseCors("AllowFrontend");
 
 // Serve static files from wwwroot
-app.UseStaticFiles(); // default wwwroot
+app.UseStaticFiles();
 
-// Serve specifically /wwwroot/qrcodes under /qrcodes path
+// Serve /wwwroot/qrcodes under /qrcodes path
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
@@ -46,18 +41,5 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/qrcodes"
 });
 
-// Configure HTTP request pipeline
+// Development exception page
 if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    app.UseOpenApi();
-    app.UseSwaggerUi3();
-}
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
