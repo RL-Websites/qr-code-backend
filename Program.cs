@@ -1,41 +1,62 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.Extensions.FileProviders;
+using System.IO;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
+// ==========================
+// Add services
+// ==========================
 builder.Services.AddControllers();
 
-// Enable CORS
+// --------------------------
+// Configure CORS
+// --------------------------
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
-app.UseHttpsRedirection();
 
-// ✅ Must be before app.UseAuthorization()
+// ==========================
+// Middleware pipeline
+// ==========================
+
+// Enable CORS
+app.UseCors("AllowFrontend");
+
+// Serve static files from wwwroot
 app.UseStaticFiles();
 
-app.UseCors("AllowAll");
+// Serve /wwwroot/qrcodes under /qrcodes path
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "qrcodes")),
+    RequestPath = "/qrcodes"
+});
 
-// Configure the HTTP request pipeline.
+// Development exception page
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseDeveloperExceptionPage();
 }
 
-app.UseHttpsRedirection();
-
+// Routing & controllers
+app.UseRouting();
 app.UseAuthorization();
+app.MapControllers();
 
+app.Run();
+
+// Routing & controllers
+app.UseRouting();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
