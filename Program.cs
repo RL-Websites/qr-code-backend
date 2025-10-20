@@ -3,32 +3,42 @@ using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ==========================
+// Add services to the container
+// ==========================
 builder.Services.AddControllers();
 
-// Enable CORS
+// --------------------------
+// Configure CORS
+// --------------------------
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.WithOrigins("https://qrcode.rldhaka.com") // <-- your frontend domain
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
-// OpenAPI (optional)
+// --------------------------
+// Add OpenAPI / Swagger if needed
+// --------------------------
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+// ==========================
+// Middleware pipeline
+// ==========================
+
 // Enable CORS
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 
-// Serve static files from wwwroot (default)
-app.UseStaticFiles();
+// Serve static files from wwwroot
+app.UseStaticFiles(); // default wwwroot
 
-// Serve specifically /wwwroot/qrcodes under /qrcodes
+// Serve specifically /wwwroot/qrcodes under /qrcodes path
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
@@ -36,12 +46,16 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/qrcodes"
 });
 
+// Configure HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseDeveloperExceptionPage();
+    app.UseOpenApi();
+    app.UseSwaggerUi3();
 }
 
-app.UseHttpsRedirection();
+app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapControllers();
